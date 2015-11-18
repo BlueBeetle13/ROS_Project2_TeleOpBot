@@ -91,6 +91,7 @@ void AdafruitMotorController::Motor4_Set(unsigned short direction, double speed)
 	Motor_Set(MOTOR_4, 5, 6, 7, direction, speed);
 }
 
+// Set the direction and speed of the given motor
 void AdafruitMotorController::Motor_Set(unsigned char motorNum, unsigned char in1, unsigned char in2, unsigned char pwm, unsigned short direction, double speed)
 {
 	unsigned char currentMotorDirection = MOTOR_DIRECTION_STOP;
@@ -215,6 +216,7 @@ int AdafruitMotorController::ConnectToI2C(int address)
 	return 1;
 }
 
+// Init the connection to the PCA9685 IC
 void AdafruitMotorController::Init()
 {
 	// Reseting PCA9685 MODE1 (without SLEEP) and MODE
@@ -249,6 +251,7 @@ void AdafruitMotorController::SetFrequency(double frequency)
 		printf("AdafruitMotorController - PCA9685 PWM frequency set\n");
 }
 
+// Set the individual pwm signal
 void AdafruitMotorController::SetPWM(unsigned char channel, unsigned short on, unsigned short off)
 {
 	wiringPiI2CWriteReg8(m_WiringPi_I2C, REG_LED0_ON_L + (4 * channel), on & 0xFF);
@@ -257,6 +260,7 @@ void AdafruitMotorController::SetPWM(unsigned char channel, unsigned short on, u
 	wiringPiI2CWriteReg8(m_WiringPi_I2C, REG_LED0_OFF_H + (4 * channel), off >> 8);
 }
 
+// Set pwm signal for all 4 motors at once
 void AdafruitMotorController::SetAllPWM(unsigned short on, unsigned short off)
 {
 	wiringPiI2CWriteReg8(m_WiringPi_I2C, REG_ALL_LED_ON_L, on & 0xFF);

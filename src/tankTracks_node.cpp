@@ -2,9 +2,11 @@
 #include <time.h>
 #include <signal.h>
 
+// ROS
 #include "ros/ros.h"
 #include <sensor_msgs/Joy.h>
 
+// DC motor controller
 #include "adafruitMotorController.h"
 
 
@@ -22,9 +24,11 @@ void NodeShutdown(int sig)
 // Callback for receiving joystick messages
 void JoystickCallback(const sensor_msgs::Joy::ConstPtr &msg)
 {
+	// Get the joystick position from the left analog stick
 	float leftRightAxis = msg->axes[0];
 	float upDownAxis = msg->axes[1];
 
+	// Convert the joystick position into speeds for the left and right tracks
 	float V = (1.0 - fabs(leftRightAxis)) * (upDownAxis/ 1.0) + upDownAxis;
 	float W = (1.0 - fabs(upDownAxis)) * (leftRightAxis / 1.0) + leftRightAxis;
 
@@ -68,52 +72,12 @@ int main(int argc, char ** argv)
 		ROS_INFO("Could not connect to I2C");
 		return -1;
 	}
+
+	// Speed scale based on a maximum voltage of 1.5V for the motors, and 5V from the power source
 	_motorController.SetSpeedScale(0.3);
 
+	// Wait for joystick messages continually
 	ros::spin();
-
-	/*delay(5000);
-
-	motorController.Motor2_Set(MOTOR_DIRECTION_FORWARD, 1.0);
-	motorController.Motor3_Set(MOTOR_DIRECTION_FORWARD, 0.5);
-	motorController.Motor4_Set(MOTOR_DIRECTION_BACKWARD, 0.25);
-
-	printf("1.0\n");
-	motorController.Motor1_Set(MOTOR_DIRECTION_FORWARD, 1.0);
-
-	delay(5000);
-
-	printf("0.75\n");
-	motorController.Motor1_Set(MOTOR_DIRECTION_FORWARD, 0.75);
-
-	delay(5000);
-
-	printf("0.75\n");
-	motorController.Motor1_Set(MOTOR_DIRECTION_FORWARD, 0.75);
-
-	delay(5000);
-
-	printf("0.5\n");
-	motorController.Motor1_Set(MOTOR_DIRECTION_FORWARD, 0.5);
-
-	delay(5000);
-
-	printf("-0.5\n");
-	motorController.Motor1_Set(MOTOR_DIRECTION_BACKWARD, 0.5);
-
-	delay(5000);
-
-	printf("0\n");
-	motorController.Motor1_Set(MOTOR_DIRECTION_STOP, 0);
-
-
-
-	while (ros::ok())
-	{
-		ros::spinOnce();
-
-		delay(5000);
-	}*/
 
 	return 0;
 }

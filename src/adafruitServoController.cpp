@@ -34,12 +34,18 @@ AdafruitServoController::AdafruitServoController()
 	// Initialization
 	m_WiringPi_I2C = -1;
 
-	// Min, max values
-	m_Servo_Min = 150;
-	m_Servo_Max = 600;
+	// Set initial values
+	for (int servoNum = 0; servoNum < TOTAL_SERVOS; servoNum ++)
+	{
+		// Servo Min value
+		m_Servo_Min[servoNum] = 150;
 
-	m_Servo1_Position = 4096;
-	m_Servo2_Position = 4096;
+		// Servo Max value
+		m_Servo_Max[servoNum] = 600;
+
+		// Servo Position
+		m_Servo_Position[servoNum] = 4096;
+	}
 }
 
 // Destructor
@@ -50,51 +56,52 @@ AdafruitServoController::~AdafruitServoController()
 }
 
 // Min - Max values - these are servo dependent and the position is scaled from 0->180 using these values
-void AdafruitServoController::Set_Min_Max(unsigned short min, unsigned short max)
+void AdafruitServoController::Set_Min_Max(unsigned char servoNum, unsigned short min, unsigned short max)
 {
-	m_Servo_Min = min;
-	if (m_Servo_Min < 0)
-		m_Servo_Min = 0;
-	if (m_Servo_Min > 4096)
-		m_Servo_Min = 4096;
+	// Ensure valid servo number
+	if (servoNum >= 0 && servoNum < TOTAL_SERVOS)
+	{
+		// Set min and max, constraining to limits
 
-	m_Servo_Max = max;
-	if (m_Servo_Max < 0)
-		m_Servo_Max = 0;
-	if (m_Servo_Max > 4096)
-		m_Servo_Max = 4096;
+		m_Servo_Min[servoNum] = min;
+		if (m_Servo_Min[servoNum] < 0)
+			m_Servo_Min[servoNum] = 0;
+		if (m_Servo_Min[servoNum] > 4096)
+			m_Servo_Min[servoNum] = 4096;
+
+		m_Servo_Max[servoNum] = max;
+		if (m_Servo_Max[servoNum] < 0)
+			m_Servo_Max[servoNum] = 0;
+		if (m_Servo_Max[servoNum] > 4096)
+			m_Servo_Max[servoNum] = 4096;
+	}
 }
 
 
 // Motor direction and speed
 void AdafruitServoController::Servo_SetPosition(unsigned char servoNum, unsigned short position)
 {
-	double diff = ((double)m_Servo_Max) - ((double)m_Servo_Min);
-	double pulse = ((((double)position) / 180.0) * diff) + ((double)m_Servo_Min);
-	unsigned short pulseShort = (unsigned short)pulse;
-
-	if (DEBUG_MODE)
-		printf("AdafruitServoController - Pos: %d   Pulse: %d\n", position, pulseShort);
-
-	// Update or not
-	bool update = false;
-	if (servoNum == SERVO_1 && m_Servo1_Position != pulseShort)
+	// Ensure valid servo number
+	if (servoNum >= 0 && servoNum < TOTAL_SERVOS)
 	{
-		m_Servo1_Position = pulseShort;
-		update = true;
-	}
-	else if (servoNum == SERVO_2 && m_Servo2_Position != pulseShort)
-	{
-		m_Servo2_Position = pulseShort;
-		update = true;
-	}
+		// Map the position (0-180) using the servo min/max values
+		double diff = ((double)m_Servo_Max[servoNum]) - ((double)m_Servo_Min[servoNum]);
+		double pulse = ((((double)position) / 180.0) * diff) + ((double)m_Servo_Min[servoNum]);
+		unsigned short pulseShort = (unsigned short)pulse;
 
-	if (update)
-	{
 		if (DEBUG_MODE)
-			printf("AdafruitServoController - Update PWM: %d Pulse: %d\n", servoNum, pulseShort);
+			printf("AdafruitServoController - #: %d   Pos: %d   Pulse: %d\n", servoNum, position, pulseShort);
 
-		SetPWM(servoNum, 0, pulseShort);
+
+		// Update the position if it has changed
+		if (m_Servo_Position[servoNum] != pulseShort)
+		{
+			if (DEBUG_MODE)
+				printf("AdafruitServoController - Update Servo: %d Pulse: %d\n", servoNum, pulseShort);
+
+			m_Servo_Position[servoNum] = pulseShort;
+			SetPWM(servoNum, 0, pulseShort);
+		}
 	}
 }
 
@@ -155,6 +162,7 @@ void AdafruitServoController::SetFrequency(double frequency)
 		printf("AdafruitServoController - PCA9685 PWM frequency set\n");
 }
 
+// Set specific pwm
 void AdafruitServoController::SetPWM(unsigned char channel, unsigned short on, unsigned short off)
 {
 	wiringPiI2CWriteReg8(m_WiringPi_I2C, REG_LED0_ON_L + (4 * channel), on & 0xFF);
@@ -163,6 +171,7 @@ void AdafruitServoController::SetPWM(unsigned char channel, unsigned short on, u
 	wiringPiI2CWriteReg8(m_WiringPi_I2C, REG_LED0_OFF_H + (4 * channel), off >> 8);
 }
 
+// Set all servo pwm at the same time
 void AdafruitServoController::SetAllPWM(unsigned short on, unsigned short off)
 {
 	wiringPiI2CWriteReg8(m_WiringPi_I2C, REG_ALL_LED_ON_L, on & 0xFF);

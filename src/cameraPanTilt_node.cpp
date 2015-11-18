@@ -2,12 +2,13 @@
 #include <time.h>
 #include <signal.h>
 
+// ROS
 #include "ros/ros.h"
 #include <sensor_msgs/Joy.h>
 
 #include "adafruitServoController.h"
 
-
+// Servo controller - also store the positions so they can be adjusted with joystick messages
 AdafruitServoController _servoController;
 unsigned short _servoPanPosition;
 unsigned short _servoTiltPosition;
@@ -22,6 +23,7 @@ void NodeShutdown(int sig)
 	_servoController.Servo_SetPosition(SERVO_1, 90);
 	_servoController.Servo_SetPosition(SERVO_2, 90);
 
+	// ROS shutdown
 	ros::shutdown();
 }
 
@@ -90,7 +92,8 @@ int main(int argc, char ** argv)
 	}
 	
 	// Min, max values are servo dependent
-	_servoController.Set_Min_Max(150, 600);
+	_servoController.Set_Min_Max(SERVO_1, 150, 600);
+	_servoController.Set_Min_Max(SERVO_2, 150, 600);
 
 	// Center servos
 	_servoPanPosition = 90;
