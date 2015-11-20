@@ -12,7 +12,7 @@ The purpose of this project was to continue my learning of ROS by creating somet
 Description
 -----------
 
-I've always thought that robots look cool with tank tracks so this robot will be using. In addition there will be a camera mounted that can pan and tilt in order to look around. I will be controlling this robot using a joystick connected to my laptop and will view the camera feed on my laptop screen.
+I've always thought that robots look cool with tank tracks so this robot will be using them. In addition there will be a camera mounted that can pan and tilt in order to look around. I will be controlling this robot using a joystick connected to my laptop and will view the camera feed on my laptop screen.
 
 
 Design
@@ -26,11 +26,11 @@ To control the tracks I choose a motor hat from Adafruit (https://www.adafruit.c
 
 To control the pan/tilt servos I used the Adafruit PWM servo driver (https://www.adafruit.com/products/815). This also comes in hat form but I choose just the breakout version. This also uses I2C. I had an Arduino sketch to work off, but once again opted to create a C++ class as I will likely be using both this and the motor hat often in the future.
 
-For the camera pan/tilt I went with the RPi camera and a servo pan/tilt kit.
+For the camera pan/tilt I went with the RPi camera and a servo pan/tilt kit (http://www.robotshop.com/ca/en/lynxmotion-pan-and-tilt-kit-aluminium2.html).
 
-In order to communicate over wifi effectively I needed to power the wifi dongle separately from the RPi USB connector, as it does not provide enough amps and the wifi dongle keeps powering down and losing too many packets. I modified a powered USB hub to lengthen the USB cord, block out the power source (forcing it to use the hubs power), and added wire leads to connect to my batteries.
+In order to communicate over wifi effectively I needed to power the wifi dongle separately from the RPi USB connector, as it does not provide enough amps and the wifi dongle keeps powering down and losing too many packets. I modified a powered USB hub to lengthen the USB cord, block out the power line (forcing it to use the hubs power), and added wire leads to connect to my batteries.
 
-For a power source I used a power bank to power the RPi, motor hat, and servo driver logic. I wanted to use this for the motors, but it has a shutoff that shuts down power when too few amps are being drawn. To power the DC motors, servos, and wifi dongle I used a 3.7V 2000mAh LiPo battery connected to a LiPo charger and a power booster that gives 5V and 1 amp.
+For a power source I used a 5V 4400mAh power bank to power the RPi, motor hat, and servo driver logic. I wanted to use this for the motors, but it has a shutoff that shuts down power when too few amps are being drawn. To power the DC motors, servos, and wifi dongle I used a 3.7V 2000mAh LiPo battery connected to a LiPo charger and a power booster that gives 5V and 1 amp.
 
 The pictures below show the assembled robot:
 
