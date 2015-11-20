@@ -58,4 +58,34 @@ The pictures below show the assembled robot:
 - 12) LiPo charger
 
 
+ROS
+---
 
+One of the many great things about ROS is that there is already many useful nodes already created. Keeping this in mind I wanted to quickly develop a project using as many existing technologies as possible, rather than re-invent the wheel myself. So instead of writing code to capture and send the camera feed, display the received images, and joystick control, I used existing code.
+
+The Robot
+
+- I wrote a node for controlling the tank tracks. This node subscribes to the joystick messages controls the DC motors accordingly. I translate the x-y axis information from the joystick into left/right track speed and direction. I created a C++ class for interfacing the Adafruit motor hat which allows me to easily control 4 DC motos by simply giving a direction and speed. I also allow for a scaling factor in case the power input doesn't match perfectly with the max voltage for the DC motors. In this case I set the scaling to 0.3 since I have 5V power and the motors use 1.5V max.
+
+- I wrote another node for controlling the pan/tilt of the servos. This node also subscribes to the joystick messages and listens for buttons, then sets the pan and tilt servo positions. Once again I wrote a C++ class to interface with the Adafruit servo driver allowing me to easily set the servo position.
+
+- For capturing the RPi camera images I found a node online (https://github.com/fpasteau/raspicam_node) that works great.
+
+Laptop
+
+- I am using my Macbook Pro but I installed Virtual Box and The Ubuntu Trusty Tehr and then installed ROS. Someone wrote a package for ROS already that reads the values from the joystick, and publishes messages when the values change, so this saved me writing this myself.
+
+- I also found a package for displaying images which also works great and subscribes to the image messages from the raspicam_node on the robot.
+
+Setup
+
+Once again this is very easy with ROS, I just modified the /etc/hosts file on both the robot and my laptop so each knows the *name* of the RPi which will be the master. In the past I had written my own networking code, which was fun to write but ROS makes this so much easier. I created launch files on both the RPi and my laptop and it was a pleasant surprise how well everything came together. In total it only took a week for this project, including all the time building the robot, which was also a lot of fun.
+
+Additional Thoughts
+-------------------
+
+- The antennae on the wifi dongle isn't very good so it would help the range to modify this.
+
+- Tank Tracks look cool but they seem to come off too often. This might have to do with my cheap $10 track kit but for the next project I might just go with wheels.
+
+- It would be nice if I could give topics priority, so that the joystick control of the tracks and camera pan/tilt had a higher priority than the camera feed. Again the wifi dongle worked just ok, not great so every once in a while  the camera feed got backed up or slowed the networking down and caused the joystick control to be unresponsive. When I created my own networking library in the past (before ROS) I added communication priority for just this situation.
