@@ -43,16 +43,19 @@ The pictures below show the assembled robot:
 - 5) 2 servos with pan/tilt kit
 - 6) RPi camera
 
+
 ![alt text](http://www.typhoonsoftware.com/GitHub/ROS_Project2_TeleOpBot/teleOpProject2.jpg "Project Design 2")
 
 - 7) Raspberry Pi 2, model B
 - 8) Motor hat
 - 9) Servo driver
 
+
 ![alt text](http://www.typhoonsoftware.com/GitHub/ROS_Project2_TeleOpBot/teleOpProject3.jpg "Project Design 3")
 
 - 10) Gearbox with 1.5V max DC Motors
 - 11) Powerboost for providing 5V
 - 12) LiPo charger
+
 
 
