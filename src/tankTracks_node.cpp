@@ -37,19 +37,19 @@ void JoystickCallback(const sensor_msgs::Joy::ConstPtr &msg)
 
 	// Left Track
 	if (leftTrackSpeed == 0)
-		_motorController.Motor4_Set(MOTOR_DIRECTION_STOP, 0.0);
+		_motorController.Motor_Update(MOTOR_4, MOTOR_DIRECTION_STOP, 0.0);
 	else if (leftTrackSpeed > 0)
-		_motorController.Motor4_Set(MOTOR_DIRECTION_FORWARD, fabs(leftTrackSpeed));
+		_motorController.Motor_Update(MOTOR_4, MOTOR_DIRECTION_FORWARD, fabs(leftTrackSpeed));
 	else if (leftTrackSpeed < 0)
-		_motorController.Motor4_Set(MOTOR_DIRECTION_BACKWARD, fabs(leftTrackSpeed));
+		_motorController.Motor_Update(MOTOR_4, MOTOR_DIRECTION_BACKWARD, fabs(leftTrackSpeed));
 
 	// Right Track
 	if (rightTrackSpeed == 0)
-		_motorController.Motor3_Set(MOTOR_DIRECTION_STOP, 0.0);
+		_motorController.Motor_Update(MOTOR_3, MOTOR_DIRECTION_STOP, 0.0);
 	else if (rightTrackSpeed > 0)
-		_motorController.Motor3_Set(MOTOR_DIRECTION_FORWARD, fabs(rightTrackSpeed));
+		_motorController.Motor_Update(MOTOR_3, MOTOR_DIRECTION_FORWARD, fabs(rightTrackSpeed));
 	else if (rightTrackSpeed < 0)
-		_motorController.Motor3_Set(MOTOR_DIRECTION_BACKWARD, fabs(rightTrackSpeed));
+		_motorController.Motor_Update(MOTOR_3, MOTOR_DIRECTION_BACKWARD, fabs(rightTrackSpeed));
 
 	ROS_INFO("L: %.4f   R: %.4f", leftTrackSpeed, rightTrackSpeed);
 }
@@ -74,7 +74,8 @@ int main(int argc, char ** argv)
 	}
 
 	// Speed scale based on a maximum voltage of 1.5V for the motors, and 5V from the power source
-	_motorController.SetSpeedScale(0.3);
+	_motorController.Set_Motor_Scale(MOTOR_3, 0.3);
+	_motorController.Set_Motor_Scale(MOTOR_4, 0.3);
 
 	// Wait for joystick messages continually
 	ros::spin();

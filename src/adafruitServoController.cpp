@@ -34,14 +34,15 @@ AdafruitServoController::AdafruitServoController()
 	// Initialization
 	m_WiringPi_I2C = -1;
 
+
 	// Set initial values
 	for (int servoNum = 0; servoNum < TOTAL_SERVOS; servoNum ++)
 	{
 		// Servo Min value
-		m_Servo_Min[servoNum] = 150;
+		m_Servo_Min[servoNum] = 0;
 
 		// Servo Max value
-		m_Servo_Max[servoNum] = 600;
+		m_Servo_Max[servoNum] = 4095;
 
 		// Servo Position
 		m_Servo_Position[servoNum] = 4096;
@@ -56,24 +57,27 @@ AdafruitServoController::~AdafruitServoController()
 }
 
 // Min - Max values - these are servo dependent and the position is scaled from 0->180 using these values
-void AdafruitServoController::Set_Min_Max(unsigned char servoNum, unsigned short min, unsigned short max)
+void AdafruitServoController::Servo_SetMinMax(unsigned char servoNum, unsigned short min, unsigned short max)
 {
 	// Ensure valid servo number
 	if (servoNum >= 0 && servoNum < TOTAL_SERVOS)
 	{
+		if (DEBUG_MODE)
+			printf("AdafruitServoController - Servo: %d   Min:%d   Max:%d\n", servoNum, min, max);
+
 		// Set min and max, constraining to limits
 
 		m_Servo_Min[servoNum] = min;
 		if (m_Servo_Min[servoNum] < 0)
 			m_Servo_Min[servoNum] = 0;
-		if (m_Servo_Min[servoNum] > 4096)
-			m_Servo_Min[servoNum] = 4096;
+		if (m_Servo_Min[servoNum] > 4095)
+			m_Servo_Min[servoNum] = 4095;
 
 		m_Servo_Max[servoNum] = max;
 		if (m_Servo_Max[servoNum] < 0)
 			m_Servo_Max[servoNum] = 0;
-		if (m_Servo_Max[servoNum] > 4096)
-			m_Servo_Max[servoNum] = 4096;
+		if (m_Servo_Max[servoNum] > 4095)
+			m_Servo_Max[servoNum] = 4095;
 	}
 }
 

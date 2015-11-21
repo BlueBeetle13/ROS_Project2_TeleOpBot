@@ -54,8 +54,8 @@ void JoystickCallback(const sensor_msgs::Joy::ConstPtr &msg)
 	}
 
 	// Limits
-	if (_servoPanPosition < 0)
-		_servoPanPosition = 0;
+	if (_servoPanPosition < 1)
+		_servoPanPosition = 1;
 	else if (_servoPanPosition > 180)
 		_servoPanPosition = 180;
 
@@ -92,8 +92,8 @@ int main(int argc, char ** argv)
 	}
 	
 	// Min, max values are servo dependent
-	_servoController.Set_Min_Max(SERVO_1, 150, 600);
-	_servoController.Set_Min_Max(SERVO_2, 150, 600);
+	_servoController.Servo_SetMinMax(SERVO_1, 150, 600);
+	_servoController.Servo_SetMinMax(SERVO_2, 150, 600);
 
 	// Center servos
 	_servoPanPosition = 90;

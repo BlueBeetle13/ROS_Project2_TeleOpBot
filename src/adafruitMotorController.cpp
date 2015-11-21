@@ -25,12 +25,6 @@
 #define BIT_INVRT			0x10
 #define BIT_OUTDRV			0x04
 
-// Motor Identifiers
-#define MOTOR_1				0
-#define MOTOR_2				1
-#define MOTOR_3				2
-#define MOTOR_4				3
-
 // Debug verbose output
 #define DEBUG_MODE			1
 
@@ -41,16 +35,13 @@ AdafruitMotorController::AdafruitMotorController()
 	// Initialization
 	m_WiringPi_I2C = -1;
 
-	m_SpeedScale = 1.0;
+	for (int motorNum = 0; motorNum < TOTAL_MOTORS; motorNum ++)
+	{
+		m_Motor_Scale[motorNum] = 1.0;
 
-	m_Motor1_Direction = MOTOR_DIRECTION_STOP;
-	m_Motor1_Speed = 0;
-	m_Motor2_Direction = MOTOR_DIRECTION_STOP;
-	m_Motor2_Speed = 0;
-	m_Motor3_Direction = MOTOR_DIRECTION_STOP;
-	m_Motor3_Speed = 0;
-	m_Motor4_Direction = MOTOR_DIRECTION_STOP;
-	m_Motor4_Speed = 0;
+		m_Motor_Direction[motorNum] = MOTOR_DIRECTION_STOP;
+		m_Motor_Speed[motorNum] = 0;
+	}
 }
 
 // Destructor
@@ -65,59 +56,41 @@ AdafruitMotorController::~AdafruitMotorController()
 	SetAllPWM(0, 0);
 }
 
-void AdafruitMotorController::SetSpeedScale(double speedScale)
+void AdafruitMotorController::Set_Motor_Scale(unsigned char motorNum, double motorScale)
 {
-	m_SpeedScale = speedScale;
+	if (motorNum >= 0 && motorNum < TOTAL_MOTORS)
+		m_Motor_Scale[motorNum] = motorScale;
 }
 
 // Motor direction and speed
-void AdafruitMotorController::Motor1_Set(unsigned short direction, double speed)
+void AdafruitMotorController::Motor_Update(unsigned char motorNum, unsigned short direction, double speed)
 {
-	Motor_Set(MOTOR_1, 10, 9, 8, direction, speed);
+	if (motorNum == MOTOR_1)
+		Motor_Set(MOTOR_1, 10, 9, 8, direction, speed);
+
+	else if (motorNum == MOTOR_2)
+		Motor_Set(MOTOR_2, 11, 12, 13, direction, speed);
+
+	else if (motorNum == MOTOR_3)
+		Motor_Set(MOTOR_3, 4, 3, 2, direction, speed);
+
+	else if (motorNum == MOTOR_4)
+		Motor_Set(MOTOR_4, 5, 6, 7, direction, speed);
 }
 
-void AdafruitMotorController::Motor2_Set(unsigned short direction, double speed)
-{
-	Motor_Set(MOTOR_2, 11, 12, 13, direction, speed);
-}
 
-void AdafruitMotorController::Motor3_Set(unsigned short direction, double speed)
-{
-	Motor_Set(MOTOR_3, 4, 3, 2, direction, speed);
-}
-
-void AdafruitMotorController::Motor4_Set(unsigned short direction, double speed)
-{
-	Motor_Set(MOTOR_4, 5, 6, 7, direction, speed);
-}
 
 // Set the direction and speed of the given motor
 void AdafruitMotorController::Motor_Set(unsigned char motorNum, unsigned char in1, unsigned char in2, unsigned char pwm, unsigned short direction, double speed)
 {
 	unsigned char currentMotorDirection = MOTOR_DIRECTION_STOP;
 	unsigned short currentMotorSpeed = 0;
+	double motorScale = 1.0;
 
 	// *** Get the current direction and speed, and only adjust if a change is made
-	if (motorNum == MOTOR_1)
-	{
-		currentMotorDirection = m_Motor1_Direction;
-		currentMotorSpeed = m_Motor1_Speed;
-	}
-	else if (motorNum == MOTOR_2)
-	{
-		currentMotorDirection = m_Motor2_Direction;
-		currentMotorSpeed = m_Motor2_Speed;
-	}
-	else if (motorNum == MOTOR_3)
-	{
-		currentMotorDirection = m_Motor3_Direction;
-		currentMotorSpeed = m_Motor3_Speed;
-	}
-	else if (motorNum == MOTOR_4)
-	{
-		currentMotorDirection = m_Motor4_Direction;
-		currentMotorSpeed = m_Motor4_Speed;
-	}
+	currentMotorDirection = m_Motor_Direction[motorNum];
+	currentMotorSpeed = m_Motor_Speed[motorNum];
+	motorScale = m_Motor_Scale[motorNum];
 
 
 	// *** Direction
@@ -151,14 +124,7 @@ void AdafruitMotorController::Motor_Set(unsigned char motorNum, unsigned char in
 		}
 
 		// Update the current motor direction
-		if (motorNum == MOTOR_1)
-			m_Motor1_Direction = direction;
-		else if (motorNum == MOTOR_2)
-			m_Motor2_Direction = direction;
-		else if (motorNum == MOTOR_3)
-			m_Motor3_Direction = direction;
-		else if (motorNum == MOTOR_4)
-			m_Motor4_Direction = direction;
+		m_Motor_Direction[motorNum] = direction;
 	}
 
 
@@ -168,7 +134,7 @@ void AdafruitMotorController::Motor_Set(unsigned char motorNum, unsigned char in
 	speed *= 4095.0;
 
 	// Scale down if needed
-	speed *= m_SpeedScale;
+	speed *= motorScale;
 
 	// Convert to short
 	unsigned short speedShort = (unsigned short)speed;
@@ -182,14 +148,7 @@ void AdafruitMotorController::Motor_Set(unsigned char motorNum, unsigned char in
 		SetPWM(pwm, 0, speedShort);
 
 		// Update the current motor speed
-		if (motorNum == MOTOR_1)
-			m_Motor1_Speed = speedShort;
-		else if (motorNum == MOTOR_2)
-			m_Motor2_Speed = speedShort;
-		else if (motorNum == MOTOR_3)
-			m_Motor3_Speed = speedShort;
-		else if (motorNum == MOTOR_4)
-			m_Motor4_Speed = speedShort;
+		m_Motor_Speed[motorNum] = speedShort;
 	}
 }
 

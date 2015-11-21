@@ -36,7 +36,6 @@ private:
 	void Init();
 	void SetFrequency(double frequency);
 
-	void Servo_SetPosition(unsigned char motorNum, unsigned char in1, unsigned char in2, unsigned char pwm, unsigned short direction, double speed);
 	void SetPWM(unsigned char channel, unsigned short on, unsigned short off);
 	void SetAllPWM(unsigned short on, unsigned short off);
 
@@ -50,7 +49,7 @@ public:
 
 	// Used to scale 0->180 degrees to pulse length for a specific types of servos, each servo can
 	// have different values so all 16 servos could be different
-	void Set_Min_Max(unsigned char servoNum, unsigned short min, unsigned short max);
+	void Servo_SetMinMax(unsigned char servoNum, unsigned short min, unsigned short max);
 
 	// Set Servo Position (0->180 degrees)
 	void Servo_SetPosition(unsigned char servoNum, unsigned short position);
