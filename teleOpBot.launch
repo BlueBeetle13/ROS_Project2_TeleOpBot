@@ -2,9 +2,9 @@
 	<node name="tankTracks_node" pkg="project2_teleop_tank" type="tankTracks_node" />
 	<node name="cameraPanTilt_node" pkg="project2_teleop_tank" type="cameraPanTilt_node" />
 	<node name="raspicam_node" pkg="raspicam" type="raspicam_node">
-		<param name="_framerate" value="1" />
-		<param name="_quality" value="10" />
-		<param name="_width" value="320" />
-		<param name="_height" value="200" />
+		<param name="framerate" value="2" />
+		<param name="quality" value="10" />
+		<param name="width" value="160" />
+		<param name="height" value="100" />
 	</node>
 </launch>
