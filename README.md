@@ -124,6 +124,10 @@ rosservice call /camera/start_capture
 roslaunch src/project2_teleop_tank/teleOpControl.launch
 ```
 
+Here is a video of the robot in action:
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=EJsIeEJadNc" target="_blank"><img src="http://img.youtube.com/vi/EJsIeEJadNc/0.jpg" 
+alt="Robot video on YouTube" width="640" height="480" border="10" /></a>
+
 
 Additional Thoughts
 -------------------
