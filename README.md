@@ -79,7 +79,26 @@ Laptop
 
 Setup
 
-Once again this is very easy with ROS, I just modified the /etc/hosts file on both the robot and my laptop so each knows the *name* of the RPi which will be the master. In the past I had written my own networking code, which was fun to write but ROS makes this so much easier. I created launch files on both the RPi and my laptop and it was a pleasant surprise how well everything came together. In total it only took a week for this project, including all the time building the robot, which was also a lot of fun.
+Once again this is very easy with ROS, I just modified the /etc/hosts file on both the robot and my laptop so each knows the hostname of the RPi which will be the master. In the past I had written my own networking code, which was fun to write but ROS makes this so much easier. I created launch files on both the RPi and my laptop and it was a pleasant surprise how well everything came together. In total it only took a week for this project, including all the time building the robot, which was also a lot of fun.
+
+/etc/hosts on RPi
+```
+192.168.0.20    localhost
+192.168.0.20    pibot
+192.168.0.21    Mac-Ubuntu-ROS
+```
+
+/etc/hosts on laptop
+```
+192.168.0.21    localhost
+192.168.0.21    Mac-Ubuntu-ROS
+192.168.0.20    pibot
+```
+
+On laptop:
+ROS_MASTER_URI=http://pibot:11311
+ROS_IP=192.168.0.21
+
 
 Additional Thoughts
 -------------------
