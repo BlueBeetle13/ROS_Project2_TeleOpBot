@@ -61,21 +61,21 @@ The pictures below show the assembled robot:
 ROS
 ---
 
-One of the many great things about ROS is that there is already many useful nodes already created. Keeping this in mind I wanted to quickly develop a project using as many existing technologies as possible, rather than re-invent the wheel myself. So instead of writing code to capture and send the camera feed, display the received images, and joystick control, I used existing code.
+One of the many great things about ROS is that there are many useful nodes already created. Keeping this in mind I wanted to quickly develop a project using as many existing technologies as possible, rather than re-invent the wheel myself. So instead of writing code to capture and send the camera feed, display the received images, and joystick control, I used existing code.
 
 The Robot
 
-- I wrote a node for controlling the tank tracks. This node subscribes to the joystick messages controls the DC motors accordingly. I translate the x-y axis information from the joystick into left/right track speed and direction. I created a C++ class for interfacing the Adafruit motor hat which allows me to easily control 4 DC motos by simply giving a direction and speed. I also allow for a scaling factor in case the power input doesn't match perfectly with the max voltage for the DC motors. In this case I set the scaling to 0.3 since I have 5V power and the motors use 1.5V max.
+- I wrote a node for controlling the tank tracks. This node subscribes to the joystick messages and controls the DC motors accordingly. I translate the x-y axis information from the joystick into left/right track speed and direction. I created a C++ class for interfacing the Adafruit motor hat which allows me to easily control 4 DC motos by simply giving a direction and speed. I also allow for a scaling factor in case the power input doesn't match perfectly with the max voltage for the DC motors. In this case I set the scaling to 0.3 since I have 5V power and the motors use 1.5V max.
 
-- I wrote another node for controlling the pan/tilt of the servos. This node also subscribes to the joystick messages and listens for buttons, then sets the pan and tilt servo positions. Once again I wrote a C++ class to interface with the Adafruit servo driver allowing me to easily set the servo position.
+- I wrote another node for controlling the pan/tilt of the servos. This node also subscribes to the joystick messages and listens for button presses, then sets the pan and tilt servo positions. Once again I wrote a C++ class to interface with the Adafruit servo driver allowing me to easily set the servo position.
 
 - For capturing the RPi camera images I found a node online (https://github.com/fpasteau/raspicam_node) that works great.
 
 Laptop
 
-- I am using my Macbook Pro but I installed Virtual Box and The Ubuntu Trusty Tehr and then installed ROS. Someone wrote a package for ROS already that reads the values from the joystick, and publishes messages when the values change, so this saved me writing this myself.
+- I am using my Macbook Pro but I installed Virtual Box and The Ubuntu Trusty Tehr and then installed ROS. Someone wrote a package for ROS already (joy/joy_node) that reads the values from the joystick, and publishes messages when the values change, so this saved me writing this myself.
 
-- I also found a package for displaying images which also works great and subscribes to the image messages from the raspicam_node on the robot.
+- I also found a package for displaying images (image_view/image_view) which also works great and subscribes to the image messages from the raspicam_node on the robot.
 
 Setup
 
@@ -98,6 +98,31 @@ Once again this is very easy with ROS, I just modified the /etc/hosts file on bo
 On laptop:
 ROS_MASTER_URI=http://pibot:11311
 ROS_IP=192.168.0.21
+
+The launch file on my laptop
+```
+<launch>
+	<node name="joy_node" pkg="joy" type="joy_node">
+		<param name="dev" value="/dev/input/js2" />
+	</node>
+	<node name="image_view" pkg="image_view" type="image_view" respawn="false" output="screen">
+		<remap from="image" to="/camera/image" />
+		<param name="image_transport" value="compressed" />
+		<param name="autosize" value="false" />
+	</node>
+</launch>
+```
+
+And the startup script on my laptop
+```
+#! /bin/bash
+
+cd /home/phil/catkin_ws
+source devel/setup.bash
+sudo chmod a+rw /dev/input/js2
+rosservice call /camera/start_capture
+roslaunch src/project2_teleop_tank/teleOpControl.launch
+```
 
 
 Additional Thoughts
